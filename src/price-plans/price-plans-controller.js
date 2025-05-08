@@ -40,18 +40,17 @@ const generateBilling = (getData, req) => {
         return date.getUTCMonth() + 1 === monthInt && date.getUTCFullYear() === yearInt;
     });
 
-    const totalUsage = filterData.reduce((acc, r) => acc + r.reading, 0); console.log("totalUsage", totalUsage)
+    const totalUsage = filterData.reduce((acc, r) => acc + r.reading, 0);
     const unitPrice = meterPricePlanMap[smartMeterId].rate;
 
     const totalPrice = totalUsage * unitPrice;
-
-    console.log("taxInt", taxInt)
 
     const grossTotal = totalPrice + (totalPrice * taxInt)
 
     return {
         smartMeterId,
-        month, year,
+        month,
+        year,
         grossTotal
     };
 }

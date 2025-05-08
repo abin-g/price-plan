@@ -1,3 +1,5 @@
+const { average } = require('../usage/usage');
+
 const read = (getData, req) => {
     const meter = req.params.smartMeterId;
     const { startTime, endTime, minReading, maxReading } = req.query
@@ -33,17 +35,23 @@ const averageReading = (getData, req) => {
     const start = parseInt(startTime, 10);
     const end = parseInt(endTime, 10);
 
-    const filtered = readings.filter((r) => r.time <= start && r.time >= end);
+    const averageConsumption = average(readings.filter((r) => r.time <= start && r.time >= end));
 
-    const sum = filtered.reduce((acc, r) => acc + r.reading, 0);
-    const averageConsumption = sum / filtered.length;
+
+    //Peak Energy Consumption
+    const filterData = readings.filter((t) => t.time <= startTime && t.time >= endTime);
+    const peakReading = filterData.reduce((max, r) => r.reading > max.reading ? r : max)
+    console.log("filterData=>", filterData)
 
     return {
         smartMeterid,
         startTime: start,
         endTime: end,
         averageConsumption,
-        readingsCount: filtered.length
+        peakReading: {
+            time: new Date(peakReading.time * 1000).toISOString(),
+            comsumption: peakReading.reading
+        }
     };
 }
 
